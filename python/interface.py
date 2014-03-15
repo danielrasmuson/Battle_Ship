@@ -1,5 +1,4 @@
 #TODO - add check for correct board take in
-#TODO - add check 
 
 class Interface():
     """ Do not use all the functions here (dont get board and see where everything is) 
@@ -13,29 +12,28 @@ class Interface():
         self.fired = 0
         self.pieceKey = {"A":"Carrier","B":"Battleship","C":"Cruiser","S":"Submarine","D":"Destroyer"}
 
-        textFile = open(fileName,"r") #todo dynamic
-        fullText = textFile.read()
-        textFile.close()
-        
-        self.board = []
-        self.orginalBoard = [] # to print at the board
-        for line in fullText.split("\n"):
-            self.board.append(line.split())
-            self.orginalBoard.append(line.split())
-        #todo add check board
-        
+        self.setBoard(fileName)
 
     def getBoard(self):
         return self.board
 
     def setBoard(self, fileName):
-        textFile = open(fileName,"r")
+        # note how this is one directory back
+        textFile = open("..\\"+fileName,"r") #todo dynamic
         fullText = textFile.read()
         textFile.close()
         
+        # the reason we have both self.board and self.orginalBoard
+        # is because we are marking up self.board as the game goes on
+        # when a shot is fired, if it hits a ship we change a C for example
+        # to a 1
         self.board = []
+        self.orginalBoard = [] # to print at the end board
         for line in fullText.split("\n"):
             self.board.append(line.split())
+            self.orginalBoard.append(line.split())
+        #todo add check board
+
 
     def fireShot(self, x, y):
         self.fired += 1 # increment shots
