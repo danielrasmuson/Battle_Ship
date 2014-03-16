@@ -34,9 +34,7 @@ class Interface {
         this.pieceKey.put("D", "Destroyer");
 
         setBoard(fileName);
-
     }
-
     public void setBoard(String fileName){
         // read file and add to board array
         String content = null;
@@ -57,9 +55,15 @@ class Interface {
         String[] lineList = content.split("\n");
         for (int i = 0; i < lineList.length; i++){
             String[] charList = lineList[i].split(" ");
+
+            // for some reason this one has an extra char
+            int last = charList.length-1;
+            charList[last] = charList[last].substring(0,1);           
+
             board[i] = charList;
             orginalBoard[i] = charList;
         }
+
 
         this.board = board;
         this.orginalBoard = orginalBoard;
@@ -80,13 +84,13 @@ class Interface {
             System.out.println();
         }
     }
-
     public int getShotsFired(){
         return this.fired;
     }  
     public String fireShot(int x, int y){
         this.fired += 1;
         String shot = this.board[y][x];
+
         if (shot.equals("0")){
             return "0";
         }
@@ -113,7 +117,6 @@ class Interface {
             }
         }
     }
-
     public boolean isSolved(){
         // if all the characters are numbers the puzzled is solved
         try{
