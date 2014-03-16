@@ -22,71 +22,79 @@ public class main_DAN {
 
         // while its not solved
 
-        // gameDone:
-        // for (int y = 0; y < 10; y++){
-        //     for (int x = 0; x < 10; x++){
-        //         String rawResult = battleShip.fireShot(x, y);
-        //         board.processResult(rawResult, x, y);
+        stop:
+        for (int y = 0; y < 10; y++){
+            for (int x = 0; x < 10; x++){
+                String rawResult = battleShip.fireShot(x, y);
+                String result = board.processResult(rawResult, x, y);
 
-        //         if (battleShip.isSolved()){
-        //             break gameDone;
-        //         }
-        //     }
-        // }
+                // if (result.equals("hit")){
+                //     break stop;
+                // }
+            }
+        }
+        // System.out.println(board.getMoves().print());
+        board.getMoves().print();
+        // board.getMoves().getAllHits();
+        System.out.println(Arrays.toString(board.getMoves().getLastHitN(3)));
+        
         // board.moves.print();
 
         // // battleShip.printBoard();
         // // System.out.println("\n");
         // // board.printBoard(); 
 
+        // the next test I'm going to run is 
+        // fire away until I hit a ship then I'm going to try and sink it
 
-        gameDone:
-        while (!(battleShip.isSolved())){
 
-            // while we haven't found a ship and sinking ship is off
-            if (!(board.sinkingShip())){
-                int[] coord = board.getNextSquare(); // see the next square function for all the details
-                String resultRaw = battleShip.fireShot(coord[0], coord[1]);
-                String result = board.processResult(resultRaw, coord[0], coord[1]);
-                if (result.equals("hit")){
-                    board.setSinkShipOn();
-                }
-            }
-            // we hit a ship and we want to try and sink it
-            else{
-                // we circle around (see getFiringOrder) until we find a sequence
-                int[][] shots = getFiringOrder(x,y);
-                for (int i = 0; i < shots.length; i++){
-                    int[] coord = shots[i];
-                    String resultRaw = battleShip.fireShot(coord[0], coord[1]);
-                    String result = board.processResult(resultRaw, coord[0], coord[1]);
+        // gameDone:
+        // while (!(battleShip.isSolved())){
 
-                    // we found a sequence
-                    if (result.equals("hit")){
-                        int[][] shotsInRow = getSinkingShipLine();
-                        // for shot in shotsInRow:
-                        //     result = fireshot
-                        //     result = processResult
-                        //     ship sunk?
-                        //     break 
-                    }
-                    else if (result.equals("done")){
-                        break gameDone;
-                    }
-                }
-                // where did it orginally hit?
-                // finds if its horizontal or vertical
-                    // by guessing around the hit spot
-                    // guessing at longest lengths first 
-                    // returns an array of points in most likely to least likely order
+        //     // while we haven't found a ship and sinking ship is off
+        //     if (!(board.sinkingShip())){
+        //         int[] coord = board.getNextSquare(); // see the next square function for all the details
+        //         String resultRaw = battleShip.fireShot(coord[0], coord[1]);
+        //         String result = board.processResult(resultRaw, coord[0], coord[1]);
+        //         if (result.equals("hit")){
+        //             board.setSinkShipOn();
+        //         }
+        //     }
+        //     // we hit a ship and we want to try and sink it
+        //     else{
+        //         // we circle around (see getFiringOrder) until we find a sequence
+        //         int[][] shots = getFiringOrder(x,y);
+        //         for (int i = 0; i < shots.length; i++){
+        //             int[] coord = shots[i];
+        //             String resultRaw = battleShip.fireShot(coord[0], coord[1]);
+        //             String result = board.processResult(resultRaw, coord[0], coord[1]);
 
-                // if we get a secondhit it continues in that line until it sinks a ship
+        //             // we found a sequence
+        //             if (result.equals("hit")){
+        //                 int[][] shotsInRow = getSinkingShipLine();
+        //                 // for shot in shotsInRow:
+        //                 //     result = fireshot
+        //                 //     result = processResult
+        //                 //     ship sunk?
+        //                 //     break 
+        //             }
+        //             else if (result.equals("done")){
+        //                 break gameDone;
+        //             }
+        //         }
+        //         // where did it orginally hit?
+        //         // finds if its horizontal or vertical
+        //             // by guessing around the hit spot
+        //             // guessing at longest lengths first 
+        //             // returns an array of points in most likely to least likely order
 
-                // once ship was sunk checks hits verses the size of the ship 
-                // to determine if it was a clean hit 
+        //         // if we get a secondhit it continues in that line until it sinks a ship
 
-            }
-        }
+        //         // once ship was sunk checks hits verses the size of the ship 
+        //         // to determine if it was a clean hit 
+
+        //     }
+        // }
     }
 }
 

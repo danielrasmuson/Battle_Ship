@@ -128,4 +128,7 @@ public class Board {
     //     // todo: I should probably include  orderingit by side lengths
 
     // }
+    public MoveHistory getMoves(){
+        return this.moves;
+    }
 }
