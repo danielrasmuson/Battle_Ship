@@ -6,6 +6,7 @@ public class Board {
     public int checkerBoard;
     public boolean sinkShip;
     public ShipStatus ships;
+    public MoveHistory moves;
 
     public Board(){
         String[][] board = new String[10][10];
@@ -30,6 +31,8 @@ public class Board {
         this.ships = ships;
 
         // init - move history 
+        this.moves = new MoveHistory();
+
     }
     public boolean sinkingShip(){
         // this means you hit a ship and you are in the process of sinking it
@@ -92,13 +95,9 @@ public class Board {
     }
     // maybe I dont need int x and int y not sure
     public String processResult(String result, int x, int y){
+        // adds the move to the move history
+        this.moves.addMove(x,y, result);
 
-        // System.out.println("here!");
-        // System.out.println(result);
-        // System.out.println(x);
-        // System.out.println(y);
-        // System.out.println();
-        // System.out.println();
         if (result.equals("0")){
             this.board[y][x] = "0";
             return "miss";
@@ -116,7 +115,7 @@ public class Board {
             }     
         }
     }
-    public void printBoard(){
+    public void print(){
         for (int y = 0; y < this.board.length; y++){
             for (int x = 0; x < this.board[y].length; x++){
                 System.out.print(this.board[y][x]);

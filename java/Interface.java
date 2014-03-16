@@ -90,11 +90,6 @@ class Interface {
     public String fireShot(int x, int y){
         this.fired += 1;
         String shot = this.board[y][x];
-
-        // // todo not a good solution
-        // if (shot.length() == 2){
-        //     shot = shot.substring(0,1);
-        // }
         if (shot.equals("0")){
             return "0";
         }
