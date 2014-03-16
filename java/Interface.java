@@ -93,6 +93,7 @@ class Interface {
         //I can't understand half the stuff in this method
         this.fired += 1;
         String shot = this.board[y][x];
+
         if (shot.equals("0")){
             return "0";
         }
