@@ -1,0 +1,7 @@
+STRATEGIES FOR ME
+have my ships faceing different directions they will probably have the same routine pattern for checking 
+exclude certain areas if they can not be ships there (the area is too small crosses it off from the board)
+
+
+could look at this article
+http://www.wikihow.com/Win-at-Battleship
