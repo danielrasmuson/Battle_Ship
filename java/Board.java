@@ -4,7 +4,6 @@ public class Board {
     // board
     public String[][] board;
     public int checkerBoard;
-    public boolean sinkShip;
     public ShipStatus ships;
     public MoveHistory moves;
     public Interface battleShip;
@@ -27,9 +26,6 @@ public class Board {
         // Random rand = new Random();
         // int randomNum = rand.nextInt((1 - 0) + 1) + 0;
         this.checkerBoard = 0;
-
-        // init - when we haven't found a ship we aren't trying to sink anything
-        this.sinkShip = false;
 
         // init ships
         ShipStatus ships = new ShipStatus();
@@ -92,6 +88,20 @@ public class Board {
             return false;
         }
     }
+    public boolean isSquareMiss(int x, int y){
+        // if the squre is not on the board
+        int size = this.board.length-1;
+        if (x < 0 || y < 0 || x > size || y > size){
+            return false;
+        }
+
+        // look at the board to see if I shot there
+        if (this.board[y][x].equals("0")){
+            return true;
+        } else{
+            return false;
+        }
+    }
     /*
         // pick even or odd squares
             // the smallest ship is two so if I only
@@ -121,7 +131,8 @@ public class Board {
         // not that my program will but I dont want to take the chance
         if (!(this.isSquareUnknown(x,y))){
             System.out.println("square already known.. bad!");
-            return "square already known.. bad!";
+            // todo probably a better solution
+            return "sunk";//hopefully this will get me out of the loop I'm stuck in
         }
 
         // adds the move to the move history
@@ -211,26 +222,13 @@ public class Board {
     }
 
     // ---------- SINKING SHIP -----------
-    public boolean sinkingShip(){
-        // this means you hit a ship and you are in the process of sinking it
-        return this.sinkShip;
-    }
-    public void setSinkShipOff(){
-        this.sinkShip = false;
-    }
-    public void setSinkShipOn(){
-        this.sinkShip = true;
-    }
-    public String sinkShip(){
-        int[] circlePoint = this.fireCirclingShip(); 
-        String nResult = "hit";
-        while (nResult != "sunk"){
-            nResult = this.fireOnShipLine(circlePoint);
-            if (this.isGameDone()){
-                return "done";
-            }
-        }
-        return "sunk";
+    public void sinkShip(){
+        this.fireCirclingShip(); 
+        // String nResult = "hit";
+        // while (nResult.equals("hit") || nResult.equals("miss")){
+        this.fireOnShipLine();
+            // System.out.println(nResult);
+        // }
     }
     // you need to know if the ship you found is going up or down 
     public String getLine(int[] point1, int[] point2){
@@ -245,30 +243,65 @@ public class Board {
         figures out what direction the ship is facing
         then takes the next shot at it
     */
-    public String fireOnShipLine(int[] circlePoint){
+    public void fireOnShipLine(){
         int[] lastHit = this.getMoves().getLastHitN(1); // most recent hit
+        int[] startingHit = this.getMoves().getLastHitN(2); // most recent hit
 
-        String direction = this.getLine(lastHit,circlePoint);
+        String direction = this.getLine(lastHit,startingHit);
 
+        // int x = lastHit[0];
+        // int y = lastHit[1];
+
+        // TODO
+        // basically what I want this to do right now is just move across (or up) the line until
         int x = lastHit[0];
         int y = lastHit[1];
-        if (direction.equals("vertical")){
-            // todo change +1 into random then *-1
-            if (this.isSquareUnknown(x,y+1)){
-                return this.fireShot(x,y+1);
-            } else{
-                return this.fireShot(circlePoint[0], circlePoint[1]-1);
-            }
-        }else{ // horizontal
-            if (this.isSquareUnknown(x+1,y)){
-                return this.fireShot(x+1,y);
-            } else{
-                return this.fireShot(circlePoint[0]-1, circlePoint[1]);
+
+        String result = "hit";
+        int reverse = 1;
+        while (result.equals("hit")){
+            if (direction.equals("vertical")){
+                // if the square is not a miss
+                if (!(this.isSquareMiss(x,y+(1*reverse)))){
+                    y += (1*reverse);
+                    // if its unknown I'm going to shoot at it
+                    if (this.isSquareUnknown(x, y)){
+                        result = this.fireShot(x,y);
+
+                        // I want to start reversing if its a miss
+                        if (result.equals("miss")){
+                            reverse = -1;
+                        }
+                    }
+                }
             }
         }
     }
 
-    public int[] fireCirclingShip(){
+
+
+        // it not a hit
+        // then it reverses and moves the other way until its not a hit
+        // and a print statment for if it wasn't sunk 
+        // because it usually should be
+
+        // if (direction.equals("vertical")){
+        //     // todo change +1 into random then *-1
+        //     if (this.isSquareUnknown(x,y+1)){
+        //         return this.fireShot(x,y+1);
+        //     } else{
+        //         // this can currently only find one point beyound the starting barrier
+        //         return this.fireShot(circlePoint[0], circlePoint[1]-1);
+        //     }
+        // }else{ // horizontal
+        //     if (this.isSquareUnknown(x+1,y)){
+        //         return this.fireShot(x+1,y);
+        //     } else{
+        //         return this.fireShot(circlePoint[0]-1, circlePoint[1]);
+        //     }
+        // }
+
+    public void fireCirclingShip(){
         /*
             Once you hit a ship you guess around the ship trying to find 
             another hit so you can determine the direction
@@ -292,6 +325,5 @@ public class Board {
         if (result.equals("miss") && this.isSquareUnknown(fX, fY-1)){
             result = this.fireShot(fX, fY-1);
         }
-        return lastHit;
     }
 }
