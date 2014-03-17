@@ -45,16 +45,25 @@ public class main_DAN {
 
         // while the board is not solved
         // while (!(board.isGameDone())){
-        for (int i = 0; i < 100; i++){
+        for (int i = 0; i < 50; i++){
             int[] coord = board.getBestGuess();
             String result = board.fireShot(coord[0], coord[1]);
 
             if (result.equals("hit")){
                 board.sinkShip();
+                board.print();
+                System.out.println();
+                System.out.println();
             }
-            board.print();
             System.out.println();
         }
+        // board.fireShot(2,6);
+        // board.fireShot(8,5);
+        // board.fireCirclingShip();
+        // board.fireOnShipLine();
+        // board.fireOnShipLine();
+
+        board.print();
         
         // board.fireShot(3,3);
         // board.sinkShip();

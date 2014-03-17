@@ -224,11 +224,7 @@ public class Board {
     // ---------- SINKING SHIP -----------
     public void sinkShip(){
         this.fireCirclingShip(); 
-        // String nResult = "hit";
-        // while (nResult.equals("hit") || nResult.equals("miss")){
         this.fireOnShipLine();
-            // System.out.println(nResult);
-        // }
     }
     // you need to know if the ship you found is going up or down 
     public String getLine(int[] point1, int[] point2){
@@ -244,62 +240,89 @@ public class Board {
         then takes the next shot at it
     */
     public void fireOnShipLine(){
-        int[] lastHit = this.getMoves().getLastHitN(1); // most recent hit
-        int[] startingHit = this.getMoves().getLastHitN(2); // most recent hit
+        int[] endpoint1 = this.getMoves().getLastHitN(1); // most recent hit
+        int[] endpoint2 = this.getMoves().getLastHitN(2); // most recent hit
 
-        String direction = this.getLine(lastHit,startingHit);
+        String direction = this.getLine(endpoint1,endpoint2);
 
-        // int x = lastHit[0];
-        // int y = lastHit[1];
+        // todo add horizontal
+        if (direction.equals("vertical")){
+            // it has a greater y
+            int[] lowerEndpoint = new int[2];
+            int[] higherEndpoint = new int[2];
+            if (endpoint1[1] > endpoint2[1]){
+                lowerEndpoint = endpoint1;
+                higherEndpoint = endpoint2;
+            }else{
+                lowerEndpoint = endpoint2;
+                higherEndpoint = endpoint1;
+            }
+            int x = lowerEndpoint[0];
+            int y = lowerEndpoint[1];
+            String result = "miss";
+            if (this.isSquareUnknown(x,y+1)){
+                result = this.fireShot(x,y+1);
+            }
 
-        // TODO
-        // basically what I want this to do right now is just move across (or up) the line until
-        int x = lastHit[0];
-        int y = lastHit[1];
-
-        String result = "hit";
-        int reverse = 1;
-        while (result.equals("hit")){
-            if (direction.equals("vertical")){
-                // if the square is not a miss
-                if (!(this.isSquareMiss(x,y+(1*reverse)))){
-                    y += (1*reverse);
-                    // if its unknown I'm going to shoot at it
-                    if (this.isSquareUnknown(x, y)){
-                        result = this.fireShot(x,y);
-
-                        // I want to start reversing if its a miss
-                        if (result.equals("miss")){
-                            reverse = -1;
-                        }
-                    }
+            x = higherEndpoint[0];
+            y = higherEndpoint[1];
+            // basically as long as its not sunk
+            if (result.equals("miss") || result.equals("hit")){
+                if (this.isSquareUnknown(x,y-1)){
+                    result = this.fireShot(x,y-1);
                 }
+            }
+
+            // if it doesn't hit anything know it means they are too different ships
+            if (result.equals("miss")){
+                System.out.println("TWO SHIPS NEXT TO ONE ANOTHER");
+            }
+
+            // it needs to keep doing this until we get result == sunk
+            System.out.println(result);
+            if (result.equals("hit")){
+                this.fireOnShipLine();
+            }
+        }
+        if (direction.equals("horziontal")){
+            // it has a greater y
+            int[] lowerEndpoint = new int[2];
+            int[] higherEndpoint = new int[2];
+            if (endpoint1[0] > endpoint2[0]){
+                lowerEndpoint = endpoint1;
+                higherEndpoint = endpoint2;
+            }else{
+                lowerEndpoint = endpoint2;
+                higherEndpoint = endpoint1;
+            }
+            int x = lowerEndpoint[0];
+            int y = lowerEndpoint[1];
+            String result = "miss";
+            if (this.isSquareUnknown(x+1,y)){
+                result = this.fireShot(x+1,y);
+            }
+            System.out.println(result);
+            x = higherEndpoint[0];
+            y = higherEndpoint[1];
+            // basically as long as its not sunk
+            if (result.equals("miss") || result.equals("hit")){
+                if (this.isSquareUnknown(x-1,y)){
+                    result = this.fireShot(x-1,y);
+                }
+            }
+
+            // if it doesn't hit anything know it means they are too different ships
+            if (result.equals("miss")){
+                System.out.println("TWO SHIPS NEXT TO ONE ANOTHER");
+            }
+
+            // it needs to keep doing this until we get result == sunk
+            System.out.println(result);
+            if (result.equals("hit")){
+                this.fireOnShipLine();
             }
         }
     }
-
-
-
-        // it not a hit
-        // then it reverses and moves the other way until its not a hit
-        // and a print statment for if it wasn't sunk 
-        // because it usually should be
-
-        // if (direction.equals("vertical")){
-        //     // todo change +1 into random then *-1
-        //     if (this.isSquareUnknown(x,y+1)){
-        //         return this.fireShot(x,y+1);
-        //     } else{
-        //         // this can currently only find one point beyound the starting barrier
-        //         return this.fireShot(circlePoint[0], circlePoint[1]-1);
-        //     }
-        // }else{ // horizontal
-        //     if (this.isSquareUnknown(x+1,y)){
-        //         return this.fireShot(x+1,y);
-        //     } else{
-        //         return this.fireShot(circlePoint[0]-1, circlePoint[1]);
-        //     }
-        // }
 
     public void fireCirclingShip(){
         /*

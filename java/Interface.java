@@ -88,6 +88,9 @@ class Interface {
         return this.fired;
     }  
     public String fireShot(int x, int y){
+        //Zach is waaaay cooler than Dan
+        //Dan also needs to learn to comment his code
+        //I can't understand half the stuff in this method
         this.fired += 1;
         String shot = this.board[y][x];
         if (shot.equals("0")){

@@ -5,3 +5,15 @@ exclude certain areas if they can not be ships there (the area is too small cros
 
 could look at this article
 http://www.wikihow.com/Win-at-Battleship
+
+What is my problem?
+    I need a way to fire on the ship once I have two hits in a row
+    Assumption I'm making that both hits are on the same ship
+        lets just say they are
+
+then I would have two temporary endpoints
+I would set sinking ship process on
+
+always shoots above top end point then 
+shoots below bottom end point
+if the ship is not sunk it recalls itself with the new endpoitns
