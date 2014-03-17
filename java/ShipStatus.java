@@ -10,8 +10,6 @@ public class ShipStatus {
         this.pieceLength.put("Submarine", 3);
         this.pieceLength.put("Destroyer", 2);
         // System.out.println(this.pieceLength.get("Destroyer"));
-
-        
     }
     public int getLongestShip(){
         Integer highest = 0;
@@ -25,10 +23,10 @@ public class ShipStatus {
     public void setSunkShip(String shipName){
         this.pieceLength.put(shipName, 0);
     }
-    /*
-        Are there still ships that havent been sunk?
-    */
     public boolean noShips(){
+        /*
+            Are there still ships that havent been sunk?
+        */
         for (Integer value : this.pieceLength.values()) {
             if (value > 0){
                 return false;

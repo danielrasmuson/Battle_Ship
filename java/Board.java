@@ -1,15 +1,13 @@
 import java.util.*;
 public class Board {
-
-    // board
     public String[][] board;
     public int checkerBoard;
     public ShipStatus ships;
     public MoveHistory moves;
     public Interface battleShip;
 
-    public Board(){
-        this.battleShip = new Interface("testBoard.txt");
+    public Board(String fileName){
+        this.battleShip = new Interface(fileName);
 
 
         String[][] board = new String[10][10];
@@ -33,7 +31,6 @@ public class Board {
 
         // init - move history 
         this.moves = new MoveHistory();
-
     }
     // ---------- GENERAL -----------
     public MoveHistory getMoves(){
@@ -55,10 +52,10 @@ public class Board {
     }
 
     // ---------- FINDING SHIP -----------
-    /*
-        Pick the next square on the checkerboard that is unsolved
-    */
     public int[] getNextSquare(){
+        /*
+            Pick the next square on the checkerboard that is unsolved
+        */
         for (int y = 0; y < this.board.length; y++){
             for (int x = 0; x < this.board[y].length; x++){
                 if (isSquareOnCheckboard(x,y)){
@@ -102,13 +99,13 @@ public class Board {
             return false;
         }
     }
-    /*
-        // pick even or odd squares
-            // the smallest ship is two so if I only
-            // hit black square on checkboard that is a good thing
-            // isSquareOnCheckboard?        
-    */
     public boolean isSquareOnCheckboard(int x, int y){
+        /*
+            // pick even or odd squares
+                // the smallest ship is two so if I only
+                // hit black square on checkboard that is a good thing
+                // isSquareOnCheckboard?        
+        */
         if (y % 2 == this.checkerBoard){
             if (x % 2 == this.checkerBoard){
                 return true;
@@ -125,8 +122,8 @@ public class Board {
             }
         }
     }
-    // maybe I dont need int x and int y not sure
     public String fireShot(int x, int y){
+        // maybe I dont need int x and int y not sure
         // if the square is already known I dont want to waste a shot
         // not that my program will but I dont want to take the chance
         if (!(this.isSquareUnknown(x,y))){
@@ -226,104 +223,72 @@ public class Board {
         this.fireCirclingShip(); 
         this.fireOnShipLine();
     }
-    // you need to know if the ship you found is going up or down 
     public String getLine(int[] point1, int[] point2){
+        // you need to know if the ship you found is going up or down 
         if (point1[0] == point2[0]){
             return "vertical";
         } else{
             return "horziontal";
         }
     }
-
-    /*
-        figures out what direction the ship is facing
-        then takes the next shot at it
-    */
     public void fireOnShipLine(){
+        /*
+            figures out what direction the ship is facing
+            then takes the next shot at it
+        */
         int[] endpoint1 = this.getMoves().getLastHitN(1); // most recent hit
         int[] endpoint2 = this.getMoves().getLastHitN(2); // most recent hit
 
         String direction = this.getLine(endpoint1,endpoint2);
 
         // todo add horizontal
+        int xY; int yYes; int xYes;
         if (direction.equals("vertical")){
-            // it has a greater y
-            int[] lowerEndpoint = new int[2];
-            int[] higherEndpoint = new int[2];
-            if (endpoint1[1] > endpoint2[1]){
-                lowerEndpoint = endpoint1;
-                higherEndpoint = endpoint2;
-            }else{
-                lowerEndpoint = endpoint2;
-                higherEndpoint = endpoint1;
-            }
-            int x = lowerEndpoint[0];
-            int y = lowerEndpoint[1];
-            String result = "miss";
-            if (this.isSquareUnknown(x,y+1)){
-                result = this.fireShot(x,y+1);
-            }
+            xY = 1; // y
+            yYes = 1;
+            xYes = 0;
+        } else{
+            xY = 0; // y
+            xYes = 1;
+            yYes = 0;
+        }
 
-            x = higherEndpoint[0];
-            y = higherEndpoint[1];
-            // basically as long as its not sunk
-            if (result.equals("miss") || result.equals("hit")){
-                if (this.isSquareUnknown(x,y-1)){
-                    result = this.fireShot(x,y-1);
-                }
-            }
+        // it has a greater y
+        int[] lowerEndpoint = new int[2];
+        int[] higherEndpoint = new int[2];
+        if (endpoint1[xY] > endpoint2[xY]){
+            lowerEndpoint = endpoint1;
+            higherEndpoint = endpoint2;
+        }else{
+            lowerEndpoint = endpoint2;
+            higherEndpoint = endpoint1;
+        }
+        int x = lowerEndpoint[0];
+        int y = lowerEndpoint[1];
+        String result = "miss";
+        if (this.isSquareUnknown(x+(1*xYes),y+(1*yYes))){
+            result = this.fireShot(x+(1*xYes),y+(1*yYes));
+        }
 
-            // if it doesn't hit anything know it means they are too different ships
-            if (result.equals("miss")){
-                System.out.println("TWO SHIPS NEXT TO ONE ANOTHER");
-            }
-
-            // it needs to keep doing this until we get result == sunk
-            System.out.println(result);
-            if (result.equals("hit")){
-                this.fireOnShipLine();
+        x = higherEndpoint[0];
+        y = higherEndpoint[1];
+        // basically as long as its not sunk
+        if (result.equals("miss") || result.equals("hit")){
+            if (this.isSquareUnknown(x-(1*xYes),y-(1*yYes))){
+                result = this.fireShot(x-(1*xYes),y-(1*yYes));
             }
         }
-        if (direction.equals("horziontal")){
-            // it has a greater y
-            int[] lowerEndpoint = new int[2];
-            int[] higherEndpoint = new int[2];
-            if (endpoint1[0] > endpoint2[0]){
-                lowerEndpoint = endpoint1;
-                higherEndpoint = endpoint2;
-            }else{
-                lowerEndpoint = endpoint2;
-                higherEndpoint = endpoint1;
-            }
-            int x = lowerEndpoint[0];
-            int y = lowerEndpoint[1];
-            String result = "miss";
-            if (this.isSquareUnknown(x+1,y)){
-                result = this.fireShot(x+1,y);
-            }
-            System.out.println(result);
-            x = higherEndpoint[0];
-            y = higherEndpoint[1];
-            // basically as long as its not sunk
-            if (result.equals("miss") || result.equals("hit")){
-                if (this.isSquareUnknown(x-1,y)){
-                    result = this.fireShot(x-1,y);
-                }
-            }
 
-            // if it doesn't hit anything know it means they are too different ships
-            if (result.equals("miss")){
-                System.out.println("TWO SHIPS NEXT TO ONE ANOTHER");
-            }
+        // if it doesn't hit anything know it means they are too different ships
+        if (result.equals("miss")){
+            System.out.println("TWO SHIPS NEXT TO ONE ANOTHER");
+        }
 
-            // it needs to keep doing this until we get result == sunk
-            System.out.println(result);
-            if (result.equals("hit")){
-                this.fireOnShipLine();
-            }
+        // it needs to keep doing this until we get result == sunk
+        if (result.equals("hit")){
+            this.fireOnShipLine();
         }
     }
-
     public void fireCirclingShip(){
         /*
             Once you hit a ship you guess around the ship trying to find 
