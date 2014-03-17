@@ -12,7 +12,6 @@ import java.util.Arrays;
 public class main_DAN {
     public static void main(String[] args) {
         Board board = new Board();
-        Interface battleShip = new Interface("testBoard.txt");
         // System.out.println(board.checkerBoard);
 
         // ship hunt
@@ -22,22 +21,68 @@ public class main_DAN {
 
         // while its not solved
 
+        // stop:
+        int counter = 0;
         stop:
         for (int y = 0; y < 10; y++){
             for (int x = 0; x < 10; x++){
-                String rawResult = battleShip.fireShot(x, y);
-                String result = board.processResult(rawResult, x, y);
+                if (board.isSquareOnCheckboard(x,y)){
+                    String result = board.fireShot(x, y);
 
-                // if (result.equals("hit")){
-                //     break stop;
-                // }
+                    if (result.equals("hit")){
+                        board.sinkShip();
+                        counter += 1;
+                        if (counter == 3){
+                            break stop;
+                        }
+                    }
+                }
             }
         }
-        // System.out.println(board.getMoves().print());
-        board.getMoves().print();
-        // board.getMoves().getAllHits();
-        System.out.println(Arrays.toString(board.getMoves().getLastHitN(3)));
-        
+        System.out.println("");
+        System.out.println("");
+        board.print();
+
+        // rank guess 
+        // on a scale from 1-10 say how good a particualr move is
+
+
+
+
+        // System.out.println(board.getShips().getLongestShip());
+        // board.getMoves().print();
+
+        // board.print();
+
+        // int[] point1 = board.getMoves().getLastHitN(1); // most recent hit
+        // int[] point2 = board.getMoves().getLastHitN(2); // second most recent hit
+        // String direction = board.getLine(point1,point2);
+        // int x = point1[0];
+        // int y = point1[1];
+
+        // // so my problem here is that it needs to climb up the lane and right now its always relative to point 1
+        // String nResult = "hit";
+        // if (direction.equals("vertical")){
+        //     // start by firing down
+        //     while (board.isSquareUnknown(x,y+1) && nResult.equals("hit")){
+        //         nResult = board.fireShot(x,y+1);
+        //     }
+        //     // once it hits a zero or the edge of the board starts shooting up
+        //     nResult = "hit"; // todo a better way todo this?
+        //     while (board.isSquareUnknown(x,y-1) && nResult.equals("hit")){
+        //         nResult = board.fireShot(x,y-1);
+        //     }
+        // }
+        // System.out.println(nResult);
+        // // todo build else direction horizontal
+
+        // board.fireOnShipLine();
+        // board.fireOnShipLine();
+        // board.fireOnShipLine();
+        // board.fireOnShipLine();
+
+
+
         // board.moves.print();
 
         // // battleShip.printBoard();

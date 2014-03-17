@@ -7,8 +7,12 @@ public class Board {
     public boolean sinkShip;
     public ShipStatus ships;
     public MoveHistory moves;
+    public Interface battleShip;
 
     public Board(){
+        this.battleShip = new Interface("testBoard.txt");
+
+
         String[][] board = new String[10][10];
         this.board = board;
         // turn it into string
@@ -19,9 +23,10 @@ public class Board {
         }
 
         // init - pick a random number for the checkerBoard
-        Random rand = new Random();
-        int randomNum = rand.nextInt((1 - 0) + 1) + 0;
-        this.checkerBoard = randomNum;
+        // todo add random back in was causing problems
+        // Random rand = new Random();
+        // int randomNum = rand.nextInt((1 - 0) + 1) + 0;
+        this.checkerBoard = 0;
 
         // init - when we haven't found a ship we aren't trying to sink anything
         this.sinkShip = false;
@@ -34,16 +39,26 @@ public class Board {
         this.moves = new MoveHistory();
 
     }
-    public boolean sinkingShip(){
-        // this means you hit a ship and you are in the process of sinking it
-        return this.sinkShip;
+    // ---------- GENERAL -----------
+    public MoveHistory getMoves(){
+        return this.moves;
     }
-    public void setSinkShipOff(){
-        this.sinkShip = false;
+
+    public boolean isGameDone(){
+        return battleShip.isSolved();
     }
-    public void setSinkShipOn(){
-        this.sinkShip = true;
+
+    public void print(){
+        for (int y = 0; y < this.board.length; y++){
+            for (int x = 0; x < this.board[y].length; x++){
+                System.out.print(this.board[y][x]);
+            }
+            System.out.println();
+        }
     }
+
+
+    // ---------- FINDING SHIP -----------
     /*
         Pick the next square on the checkerboard that is unsolved
     */
@@ -64,6 +79,13 @@ public class Board {
         return endOfBoard;
     }
     public boolean isSquareUnknown(int x, int y){
+        // if the squre is not on the board
+        int size = this.board.length-1;
+        if (x < 0 || y < 0 || x > size || y > size){
+            return false;
+        }
+
+        // look at the board to see if I shot there
         if (this.board[y][x].equals("?")){
             return true;
         } else{
@@ -94,9 +116,16 @@ public class Board {
         }
     }
     // maybe I dont need int x and int y not sure
-    public String processResult(String result, int x, int y){
+    public String fireShot(int x, int y){
+        // if the square is already known I dont want to waste a shot
+        // not that my program will but I dont want to take the chance
+        if (!(this.isSquareUnknown(x,y))){
+            return "square already known.. bad!";
+        }
+
         // adds the move to the move history
-        this.moves.addMove(x,y, result);
+        String result = battleShip.fireShot(x,y);
+        this.moves.addMove(x,y,result);
 
         if (result.equals("0")){
             this.board[y][x] = "0";
@@ -111,24 +140,103 @@ public class Board {
                 return "done";
             }
             else{
+                this.ships.setSunkShip(result);
                 return "sunk";
             }     
         }
     }
-    public void print(){
-        for (int y = 0; y < this.board.length; y++){
-            for (int x = 0; x < this.board[y].length; x++){
-                System.out.print(this.board[y][x]);
+    // ----------- INTERFACE ---------------
+    public ShipStatus getShips(){
+        return this.ships;
+    }
+
+    // ---------- SINKING SHIP -----------
+    public boolean sinkingShip(){
+        // this means you hit a ship and you are in the process of sinking it
+        return this.sinkShip;
+    }
+    public void setSinkShipOff(){
+        this.sinkShip = false;
+    }
+    public void setSinkShipOn(){
+        this.sinkShip = true;
+    }
+    public String sinkShip(){
+        int[] circlePoint = this.fireCirclingShip(); 
+        String nResult = "hit";
+        while (nResult != "sunk"){
+            nResult = this.fireOnShipLine(circlePoint);
+            if (this.isGameDone()){
+                return "done";
             }
-            System.out.println();
+        }
+        return "sunk";
+    }
+    // you need to know if the ship you found is going up or down 
+    public String getLine(int[] point1, int[] point2){
+        if (point1[0] == point2[0]){
+            return "vertical";
+        } else{
+            return "horziontal";
         }
     }
-    // public int[][] getFiringOrder(){
-    //     // returns an array of points in most likely to least likely order
-    //     // todo: I should probably include  orderingit by side lengths
 
-    // }
-    public MoveHistory getMoves(){
-        return this.moves;
+    /*
+        figures out what direction the ship is facing
+        then takes the next shot at it
+    */
+    public String fireOnShipLine(int[] circlePoint){
+        int[] lastHit = this.getMoves().getLastHitN(1); // most recent hit
+
+        String direction = this.getLine(lastHit,circlePoint);
+
+        int x = lastHit[0];
+        int y = lastHit[1];
+        if (direction.equals("vertical")){
+            // todo change +1 into random then *-1
+            if (this.isSquareUnknown(x,y+1)){
+                return this.fireShot(x,y+1);
+            } else{
+                return this.fireShot(circlePoint[0], circlePoint[1]-1);
+            }
+        }else{ // horizontal
+            if (this.isSquareUnknown(x+1,y)){
+                return this.fireShot(x+1,y);
+            } else{
+                return this.fireShot(circlePoint[0]-1, circlePoint[1]);
+            }
+        }
+
+        // if we got here it means you have to jump to the other end of 
+        // the ship
+        // else there are two different ships next to one another
+        // return this.fireShot(x,y);
+    }
+
+    /*
+        Once you hit a ship you guess around the ship trying to find 
+        another hit so you can determine the direction
+    */
+    public int[] fireCirclingShip(){
+        // todo make this code a little cleaner
+        // todo make it pick a random order
+        // todo mayb include the length or probability of a direction
+        int[] lastHit = this.getMoves().getLastHitN(1); // most recent hit
+        int fX = lastHit[0];
+        int fY = lastHit[1];
+        String result = "miss";
+        if (this.isSquareUnknown(fX+1, fY)){
+            result = this.fireShot(fX+1, fY);
+        } 
+        if (result.equals("miss") && this.isSquareUnknown(fX-1, fY)){
+            result = this.fireShot(fX-1, fY);
+        }
+        if (result.equals("miss") && this.isSquareUnknown(fX, fY+1)){
+            result = this.fireShot(fX, fY+1);
+        }
+        if (result.equals("miss") && this.isSquareUnknown(fX, fY-1)){
+            result = this.fireShot(fX, fY-1);
+        }
+        return lastHit;
     }
 }
