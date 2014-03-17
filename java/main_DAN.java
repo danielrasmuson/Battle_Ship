@@ -22,29 +22,44 @@ public class main_DAN {
         // while its not solved
 
         // stop:
-        int counter = 0;
-        stop:
-        for (int y = 0; y < 10; y++){
-            for (int x = 0; x < 10; x++){
-                if (board.isSquareOnCheckboard(x,y)){
-                    String result = board.fireShot(x, y);
+        // int counter = 0;
+        // stop:
+        // for (int y = 0; y < 10; y++){
+        //     for (int x = 0; x < 10; x++){
+        //         if (board.isSquareOnCheckboard(x,y)){
+        //             String result = board.fireShot(x, y);
 
-                    if (result.equals("hit")){
-                        board.sinkShip();
-                        counter += 1;
-                        if (counter == 3){
-                            break stop;
-                        }
-                    }
-                }
+        //             if (result.equals("hit")){
+        //                 board.sinkShip();
+        //                 counter += 1;
+        //                 if (counter == 3){
+        //                     break stop;
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
+        // System.out.println("");
+        // System.out.println("");
+        // board.print();
+
+        // while the board is not solved
+        // while (!(board.isGameDone())){
+        for (int i = 0; i < 100; i++){
+            int[] coord = board.getBestGuess();
+            String result = board.fireShot(coord[0], coord[1]);
+
+            if (result.equals("hit")){
+                board.sinkShip();
             }
+            board.print();
+            System.out.println();
         }
-        System.out.println("");
-        System.out.println("");
-        board.print();
+        
+        // board.fireShot(3,3);
+        // board.sinkShip();
+        // board.print();
 
-        // rank guess 
-        // on a scale from 1-10 say how good a particualr move is
 
 
 
@@ -118,7 +133,7 @@ public class main_DAN {
         //             if (result.equals("hit")){
         //                 int[][] shotsInRow = getSinkingShipLine();
         //                 // for shot in shotsInRow:
-        //                 //     result = fireshot
+        //                 //     result = fireShot
         //                 //     result = processResult
         //                 //     ship sunk?
         //                 //     break 

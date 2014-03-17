@@ -43,11 +43,9 @@ public class Board {
     public MoveHistory getMoves(){
         return this.moves;
     }
-
     public boolean isGameDone(){
         return battleShip.isSolved();
     }
-
     public void print(){
         for (int y = 0; y < this.board.length; y++){
             for (int x = 0; x < this.board[y].length; x++){
@@ -56,7 +54,9 @@ public class Board {
             System.out.println();
         }
     }
-
+    public ShipStatus getShips(){
+        return this.ships;
+    }
 
     // ---------- FINDING SHIP -----------
     /*
@@ -120,6 +120,7 @@ public class Board {
         // if the square is already known I dont want to waste a shot
         // not that my program will but I dont want to take the chance
         if (!(this.isSquareUnknown(x,y))){
+            System.out.println("square already known.. bad!");
             return "square already known.. bad!";
         }
 
@@ -145,9 +146,68 @@ public class Board {
             }     
         }
     }
-    // ----------- INTERFACE ---------------
-    public ShipStatus getShips(){
-        return this.ships;
+    public int getGuessScore(int x, int y){
+        /*
+            Currently Guesses are scored by the ones who have the highest
+            number of unknowns surronding them.
+        */ 
+        // We dont need to find anything longer then the biggest ship on the field
+        int longestShip = this.getShips().getLongestShip();
+
+        int squareTotal = 0;
+
+        // we already know what the square is
+        if (!(isSquareUnknown(x,y))){
+            return 0;
+        }
+
+        // TESTS THE UNKNOWNS GOING LEFT RIGHT UP ANDDOWN
+        // this controls vertical or hoziontal        
+        int[][] xOrY = {{1,0},{0,1}};
+        for (int[] axis : xOrY){
+            int xMod = axis[0];
+            int yMod = axis[1];
+
+            // things controls increasing or decreasing
+            int[] upDown = {1,-1};
+            for (int direction : upDown){
+                cantSkipGaps:
+                for (int i = 1; i < longestShip; i++){
+
+                    // if you * by 0 nothing happens
+                    if (isSquareUnknown(x+(i*direction*xMod),y+(i*direction*yMod))){
+                        squareTotal += 1;
+                    }else{
+                        // want to stop if something is not correct
+                        break cantSkipGaps;
+                    }
+                }
+            }
+        }
+
+        // a percentage of the highest possible
+        // 4 sides
+        return (int) ((squareTotal/((longestShip-1)*4.0))*100);
+    }
+    public int[] getBestGuess(){
+        int bestX = -1;
+        int bestY = -1;
+        int highestScore = 0;
+        for (int y = 0; y < 10; y++){
+            for (int x = 0; x < 10; x++){
+                if (this.isSquareUnknown(x,y)){
+                    int score = this.getGuessScore(x,y);
+                    if (score > highestScore){
+                        bestY = y;
+                        bestX = x;
+                        highestScore = score;
+                    }
+                }
+            }
+        }
+
+        int[] coord = {bestX, bestY};
+        return coord;
     }
 
     // ---------- SINKING SHIP -----------
@@ -206,18 +266,13 @@ public class Board {
                 return this.fireShot(circlePoint[0]-1, circlePoint[1]);
             }
         }
-
-        // if we got here it means you have to jump to the other end of 
-        // the ship
-        // else there are two different ships next to one another
-        // return this.fireShot(x,y);
     }
 
-    /*
-        Once you hit a ship you guess around the ship trying to find 
-        another hit so you can determine the direction
-    */
     public int[] fireCirclingShip(){
+        /*
+            Once you hit a ship you guess around the ship trying to find 
+            another hit so you can determine the direction
+        */
         // todo make this code a little cleaner
         // todo make it pick a random order
         // todo mayb include the length or probability of a direction
