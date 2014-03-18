@@ -20,8 +20,17 @@ public class ShipStatus {
         }
         return (int) highest;
     }
+    public int getSmallestShip(){
+        Integer lowest = 100; // could you really havea  ship with more then 5
+        for (Integer value : this.pieceLength.values()) {
+            if (value < lowest){
+                lowest = value;
+            }
+        }
+        return (int) lowest;
+    }
     public void setSunkShip(String shipName){
-        this.pieceLength.put(shipName, 0);
+        this.pieceLength.remove(shipName);
     }
     public boolean noShips(){
         /*
@@ -33,5 +42,8 @@ public class ShipStatus {
             }
         }
         return true;
+    }
+    public int getShipLength(String shipName){
+        return this.pieceLength.get(shipName);
     }
 }

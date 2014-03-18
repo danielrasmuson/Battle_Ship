@@ -8,15 +8,56 @@
 import java.util.Arrays;
 public class main_DAN {
     public static void main(String[] args) {
-        Board board = new Board("testBoard.txt");
-        while (!(board.isGameDone())){
-        // for (int i = 0; i < 50; i++){
-            int[] coord = board.getBestGuess();
-            String result = board.fireShot(coord[0], coord[1]);
-            if (result.equals("hit")){
-                board.sinkShip();
+
+        int numOfBoards = 1;
+        for (int i = 1; i < numOfBoards+1; i++){
+            // Board board = new Board("1000Boards\\"+Integer.toString(i)+".txt");
+            Board board = new Board("1000Boards\\"+"1"+".txt");
+            
+            // for (int x = 0; x < 44; x++){
+            while (!(board.isGameDone())){
+            // for (int z = 0; z < 30; z++){
+                // System.out.println("----------------------------");
+                // board.print();
+                // int bestX = -1;
+                // int bestY = -1;
+                // int highestScore = 0;
+                // for (int y = 0; y < 10; y++){
+                //     for (int x = 0; x < 10; x++){
+                //         if (board.isSquareUnknown(x,y)){
+                //             int score = board.getGuessScore(x,y);
+                //             System.out.print(x);
+                //             System.out.print("-");
+                //             System.out.print(y);
+                //             System.out.print(" -- ");
+                //             System.out.println(score);
+                //             if (score > highestScore){
+                //                 bestY = y;
+                //                 bestX = x;
+                //                 highestScore = score;
+                //             }
+                //         }
+                //     }
+                // }
+                // System.out.println("");
+                // System.out.println("----------------------------");
+
+
+                int[] coord = board.getBestGuess();
+                // System.out.println();
+                // System.out.println();
+                // System.out.println(Arrays.toString(coord));
+                // board.print();
+                // System.out.println();
+                // System.out.println();
+                String result = board.fireShot(coord[0], coord[1]);
+                if (result.equals("hit")){
+                    board.sinkShip();
+                }
             }
-        }
-        
+            System.out.println("");
+            System.out.println("");
+            board.print();
+        }        
     }
 }
