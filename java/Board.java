@@ -148,26 +148,30 @@ public class Board {
             return "hit";
         } else{ // it should only sink a ship when its called from sinkingShip 
             // set board to sunk
+            this.moves.addMove(x,y,"1");
+
             // todo assume I hit the ship in order
-            // todo renalbe this
-            // int shipLength = this.getShips().getShipLength(result);
-            // for (int z = 0; z < shipLength; z++){
-            //     int[] hit = this.getMoves().getLastHitN(z+1);
-            //     System.out.println(Arrays.toString(hit));
-            //     this.print();
-            //     this.board[hit[1]][hit[0]] = "S";
-            // }
+            int shipLength = this.getShips().getShipLength(result);
+            for (int z = 0; z < shipLength; z++){
+                // because if its out of range I shouldn't be searching
+                if (this.getMoves().isLastHitN(z+1)){                
+                    int[] hit = this.getMoves().getLastHitN(z+1);
+                    // this.getMoves().print();
+                    // System.out.println(Arrays.toString(hit));
+                    // this.print();
+                    this.board[hit[1]][hit[0]] = "S";
+                }
+            }
 
             // this.board[y][x] = "S";
             // if there are no ships left the game is over
             this.board[y][x] = "H";
             this.getShips().setSunkShip(result);
             if (ships.noShips()){
-                this.moves.addMove(x,y,"done");
                 return "done";
             }
             else{
-                this.moves.addMove(x,y,result);
+                this.moves.addMove(x,y,"1");
                 return "sunk";
             }     
         }
@@ -275,7 +279,6 @@ public class Board {
             coord[0] = coord[0]+1*upDown;
             return coord;
         }
-
     }
     public void fireCirclingShip(){
         /*

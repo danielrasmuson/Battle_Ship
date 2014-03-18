@@ -10,7 +10,7 @@ public class main_DAN {
     public static void main(String[] args) {
 
         // int numOfBoards = 9;
-        int boardNum = 10;
+        int boardNum = 8;
         int total = 0;
         // for (int i = 1; i < numOfBoards+1; i++){
         for (int i = boardNum; i < boardNum+1; i++){
@@ -24,12 +24,12 @@ public class main_DAN {
                     board.sinkShip();
                 }
                 
-                board.print();
-                System.out.println("");
-                System.out.println("");
+                // System.out.println("");
+                // System.out.println("");
             }
             // board.getMoves().print();
             // System.out.println(board.getMoves().getHighestMoveNum());    
+            board.print();
             total += board.getMoves().getHighestMoveNum();
         }
         System.out.print("Average Moves:");
