@@ -30,9 +30,8 @@ public class Board {
         this.ships = ships;
 
         // init - move history 
-        this.moves = new MoveHistory();
+        this.moves = new MoveHistory(this);
     }
-
     // ---------- GENERAL -----------
     public MoveHistory getMoves(){
         return this.moves;
@@ -90,10 +89,13 @@ public class Board {
         // if the squre is not on the board
         int size = this.board.length-1;
         if (x < 0 || y < 0 || x > size || y > size){
-            return false;
+            // if its off the board its not really missing
+            // System.out.println("here!!! its off the board?");
+            return true; // todo - maybe not the best
         }
 
         // look at the board to see if I shot there
+        // System.out.println(this.board[y][x]);
         if (this.board[y][x].equals("0")){
             return true;
         } else{
@@ -135,30 +137,36 @@ public class Board {
 
         // adds the move to the move history
         String result = battleShip.fireShot(x,y);
-        this.moves.addMove(x,y,result);
 
         if (result.equals("0")){
             this.board[y][x] = "0";
+            this.moves.addMove(x,y,"0");
             return "miss";
         } else if(result.equals("1")){
             this.board[y][x] = "H";
+            this.moves.addMove(x,y,"1");
             return "hit";
         } else{ // it should only sink a ship when its called from sinkingShip 
             // set board to sunk
             // todo assume I hit the ship in order
-            int shipLength = this.getShips().getShipLength(result);
-            for (int z = 0; z < shipLength; z++){
-                int[] hit = this.getMoves().getLastHitN(z+1);
-                this.board[hit[1]][hit[0]] = "S";
-            }
+            // todo renalbe this
+            // int shipLength = this.getShips().getShipLength(result);
+            // for (int z = 0; z < shipLength; z++){
+            //     int[] hit = this.getMoves().getLastHitN(z+1);
+            //     System.out.println(Arrays.toString(hit));
+            //     this.print();
+            //     this.board[hit[1]][hit[0]] = "S";
+            // }
 
             // this.board[y][x] = "S";
             // if there are no ships left the game is over
             if (ships.noShips()){
+                this.moves.addMove(x,y,"done");
                 return "done";
             }
             else{
                 this.getShips().setSunkShip(result);
+                this.moves.addMove(x,y,result);
                 return "sunk";
             }     
         }
@@ -238,77 +246,35 @@ public class Board {
         this.fireCirclingShip(); 
         this.fireOnShipLine();
     }
-    public String getLine(int[] point1, int[] point2){
+    public String getLineLastTwoHits(){
         // you need to know if the ship you found is going up or down 
+        int[] point1 = this.getMoves().getLastHitN(1); // most recent hit
+        int[] point2 = this.getMoves().getLastHitN(2); // most recent hit
         if (point1[0] == point2[0]){
-            return "vertical";
+            return "v"; // vertical
         } else{
-            return "horziontal";
+            return "h"; // horizontal
         }
     }
     public String fireOnShipLine(){
-        /*
-            figures out what direction the ship is facing
-            then takes the next shot at it
-        */
-
-        // todo restructure this function its a mess
-        int[] endpoint1 = this.getMoves().getLastHitN(1); // most recent hit
-        int[] endpoint2 = this.getMoves().getLastHitN(2); // most recent hit
-
-        String direction = this.getLine(endpoint1,endpoint2);
-
-        int xY; int yYes; int xYes;
-        if (direction.equals("vertical")){
-            xY = 1; // y
-            yYes = 1;
-            xYes = 0;
-        } else{
-            xY = 0; // y
-            xYes = 1;
-            yYes = 0;
+        String direction = this.getLineLastTwoHits();
+        String result = "hit";
+        while (result.equals("hit") || result.equals("miss")){
+            result = fireNextShotOnLine(direction);
+            // System.out.println(result);
         }
-
-        // it has a greater y
-        int[] lEnd = new int[2];
-        int[] hEnd = new int[2];
-        if (endpoint1[xY] > endpoint2[xY]){
-            lEnd = endpoint1;
-            hEnd = endpoint2;
+        return result;
+    }
+    public int[] nextSquare(int[] coord, String direction, int upDown){
+        // updown is negative or positive 1 depending on direction
+        if (direction.equals("v")){
+            coord[1] = coord[1]+1*upDown;
+            return coord;
         }else{
-            lEnd = endpoint2;
-            hEnd = endpoint1;
+            coord[0] = coord[0]+1*upDown;
+            return coord;
         }
 
-        String result1 = "miss";
-        if (this.isSquareUnknown(lEnd[0]+(1*xYes),lEnd[1]+(1*yYes))){
-            result1 = this.fireShot(lEnd[0]+(1*xYes),lEnd[1]+(1*yYes));
-        }
-
-        if (result1.equals("sunk") || result1.equals("done") || this.isGameDone()){
-            return ""; 
-        }
-
-        // shoot behind
-        String result2 = "miss";
-        if (this.isSquareUnknown(hEnd[0]-(1*xYes),hEnd[1]-(1*yYes))){
-            result2 = this.fireShot(hEnd[0]-(1*xYes),hEnd[1]-(1*yYes));
-        }
-        
-        if (result2.equals("sunk") || result2.equals("done") || this.isGameDone()){
-            return ""; 
-        }
-
-        // if it doesn't hit anything know it means they are too different ships
-        if (result1.equals("miss") && result2.equals("miss")){
-            System.out.println("TWO SHIPS NEXT TO ONE ANOTHER");
-        }
-
-        // it needs to keep doing this until we get result == sunk
-        if (result1.equals("hit") || result2.equals("hit")){
-            this.fireOnShipLine();
-        }
-        return "";
     }
     public void fireCirclingShip(){
         /*
@@ -350,6 +316,60 @@ public class Board {
         if (result.equals("miss") && this.isSquareUnknown(fX, fY-1)){
             result = this.fireShot(fX, fY-1);
             // System.out.println("4 <-- here: "+result);
+        }
+    }
+    /*
+        figures out what direction the ship is facing
+        then takes the next shot at it
+    */
+    // todo restructure this function its a mess
+    public String fireNextShotOnLine(String direction){
+        int[] lastHit = this.getMoves().getLastHitN(1); // most recent hit
+        // System.out.println("");
+        // System.out.print("Last Hit: ");
+        // System.out.println(Arrays.toString(lastHit));
+        // System.out.println(direction);
+
+        int[] nSquare = this.nextSquare(lastHit, direction, 1);
+        boolean nMissing = isSquareMiss(nSquare[0], nSquare[1]);
+        // System.out.println(nMissing);
+        while (!nMissing){ // while the next square is not a miss
+            // System.out.print("down");
+            // System.out.println(Arrays.toString(nSquare));
+            if (isSquareUnknown(nSquare[0], nSquare[1])){
+                return this.fireShot(nSquare[0], nSquare[1]);
+            }
+            nSquare = this.nextSquare(nSquare, direction, 1);
+            nMissing = isSquareMiss(nSquare[0], nSquare[1]);
+        }
+
+        int[] pSquare = this.nextSquare(lastHit, direction, -1);
+        // System.out.println(Arrays.toString(pSquare));
+        boolean pMissing = isSquareMiss(pSquare[0], pSquare[1]);
+        while (!pMissing){ // while the next square is not a miss
+            // System.out.print("up");
+            // System.out.println(Arrays.toString(pSquare));
+            // System.out.println("");
+            // System.out.println("");
+            // System.out.println(Arrays.toString(pSquare));
+            // System.out.println(isSquareUnknown(pSquare[0], pSquare[1]));
+            // this.print();
+            if (isSquareUnknown(pSquare[0], pSquare[1])){
+                return this.fireShot(pSquare[0], pSquare[1]);
+            }
+            // System.out.print("this square is known");
+            // System.out.println();
+            pSquare = this.nextSquare(pSquare, direction, -1);
+            pMissing = isSquareMiss(pSquare[0], pSquare[1]);
+        }
+        // System.out.println("notLine");
+        return "notLine";
+    }
+    public boolean isHit(int x, int y){
+        if (board[y][x].equals("?") || board[y][x].equals("0")){
+            return false;
+        }else{
+            return true;
         }
     }
 }

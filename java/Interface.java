@@ -98,9 +98,9 @@ class Interface {
         }
         else{
             this.board[y][x] = "1";
-            if (this.isSolved()){// todo make isSolved
-                this.setDone(); // todo add setDone         
-            }
+            // if (this.isSolved()){// todo make isSolved
+            //     this.setDone(); // todo add setDone         
+            // }
 
             // turn this.board into a string
             String strBoard = "";

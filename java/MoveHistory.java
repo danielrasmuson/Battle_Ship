@@ -2,17 +2,19 @@ import java.util.*;
 public class MoveHistory {
     public Map<Integer, int[]> moveLocation;
     public Map<Integer, String> moveResult;
+    private Board parent;
 
-    public MoveHistory() {
+    public MoveHistory(Board parent) {
         this.moveLocation = new HashMap<Integer, int[]>();
         this.moveResult = new HashMap<Integer, String>();
+        this.parent = parent;
     }
-    public void addMove(int x, int y, String rawResult){
-        // todo rawresult might not be the best
+    public void addMove(int x, int y, String result){
+        // todo result might not be the best
         int[] coord = {x,y};
         Integer currentMove = this.getHighestMoveNum()+1;
         this.moveLocation.put(currentMove, coord);
-        this.moveResult.put(currentMove, rawResult);
+        this.moveResult.put(currentMove, result);
     }
     public int getHighestMoveNum(){
         int highest = 0;
@@ -42,6 +44,7 @@ public class MoveHistory {
             int[] value = entry.getValue();
 
             // todo change this to isHit()
+            // tdodo change this to is parent
             if (!(this.moveResult.get(key).equals("0"))){                
                 allHits.put(key, value);
             }
@@ -53,7 +56,11 @@ public class MoveHistory {
         int nthHit = 0;
         for (int i = highestMove; i > 0; i--){
             // todo isHit()
-            if (!(moveResult.get(i).equals("0"))){
+            // todo change this -- bad encapsulation
+            // is hit
+            int[] coord = this.moveLocation.get(i);
+            // System.out.println(Arrays.toString(coord));
+            if (this.parent.isHit(coord[0], coord[1])){
                 nthHit += 1;
                 if (nthHit == n){
                     return this.moveLocation.get(i);
