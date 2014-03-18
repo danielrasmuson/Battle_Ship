@@ -9,29 +9,30 @@ import java.util.Arrays;
 public class main_DAN {
     public static void main(String[] args) {
 
-        // todo having problems with board 10
-        int numOfBoards = 10;
+        // int numOfBoards = 9;
+        int boardNum = 10;
         int total = 0;
-        for (int i = 1; i < numOfBoards+1; i++){
+        // for (int i = 1; i < numOfBoards+1; i++){
+        for (int i = boardNum; i < boardNum+1; i++){
             Board board = new Board("1000Boards\\"+Integer.toString(i)+".txt");
-            // Board board = new Board("1000Boards\\"+""+".txt");
             
-            // for (int z = 0; z < 60; z++){
-            while (!board.isGameDone()){
+            for (int z = 0; z < 60; z++){
+            // while (!board.isGameDone()){
                 int[] coord = board.getBestGuess();
                 String result = board.fireShot(coord[0], coord[1]);
                 if (result.equals("hit")){
                     board.sinkShip();
                 }
+                
+                board.print();
+                System.out.println("");
+                System.out.println("");
             }
             // board.getMoves().print();
             // System.out.println(board.getMoves().getHighestMoveNum());    
             total += board.getMoves().getHighestMoveNum();
-            board.print();
-            System.out.println("");
-            System.out.println("");
         }
         System.out.print("Average Moves:");
-        System.out.println(total/numOfBoards);
+        System.out.println(total);
     }
 }

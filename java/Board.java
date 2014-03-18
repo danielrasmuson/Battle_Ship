@@ -160,12 +160,13 @@ public class Board {
 
             // this.board[y][x] = "S";
             // if there are no ships left the game is over
+            this.board[y][x] = "H";
+            this.getShips().setSunkShip(result);
             if (ships.noShips()){
                 this.moves.addMove(x,y,"done");
                 return "done";
             }
             else{
-                this.getShips().setSunkShip(result);
                 this.moves.addMove(x,y,result);
                 return "sunk";
             }     
@@ -325,17 +326,10 @@ public class Board {
     // todo restructure this function its a mess
     public String fireNextShotOnLine(String direction){
         int[] lastHit = this.getMoves().getLastHitN(1); // most recent hit
-        // System.out.println("");
-        // System.out.print("Last Hit: ");
-        // System.out.println(Arrays.toString(lastHit));
-        // System.out.println(direction);
 
         int[] nSquare = this.nextSquare(lastHit, direction, 1);
         boolean nMissing = isSquareMiss(nSquare[0], nSquare[1]);
-        // System.out.println(nMissing);
         while (!nMissing){ // while the next square is not a miss
-            // System.out.print("down");
-            // System.out.println(Arrays.toString(nSquare));
             if (isSquareUnknown(nSquare[0], nSquare[1])){
                 return this.fireShot(nSquare[0], nSquare[1]);
             }
@@ -344,25 +338,18 @@ public class Board {
         }
 
         int[] pSquare = this.nextSquare(lastHit, direction, -1);
-        // System.out.println(Arrays.toString(pSquare));
         boolean pMissing = isSquareMiss(pSquare[0], pSquare[1]);
         while (!pMissing){ // while the next square is not a miss
-            // System.out.print("up");
+            // System.out.print("Backwards Looking at ");
             // System.out.println(Arrays.toString(pSquare));
-            // System.out.println("");
-            // System.out.println("");
-            // System.out.println(Arrays.toString(pSquare));
-            // System.out.println(isSquareUnknown(pSquare[0], pSquare[1]));
             // this.print();
             if (isSquareUnknown(pSquare[0], pSquare[1])){
                 return this.fireShot(pSquare[0], pSquare[1]);
             }
-            // System.out.print("this square is known");
-            // System.out.println();
+            // System.out.println("");
             pSquare = this.nextSquare(pSquare, direction, -1);
             pMissing = isSquareMiss(pSquare[0], pSquare[1]);
         }
-        // System.out.println("notLine");
         return "notLine";
     }
     public boolean isHit(int x, int y){
