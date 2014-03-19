@@ -1,7 +1,10 @@
 import java.util.*;
 public class ShipStatus {
     public Map<String, Integer> pieceLength;
-    public ShipStatus(){
+    private Board parent;
+    public ShipStatus(Board parent){
+        this.parent = parent;
+
         this.pieceLength = new HashMap<String, Integer>();
         // 0 stands for the ship is still alive
         this.pieceLength.put("Carrier", 5);
@@ -30,6 +33,10 @@ public class ShipStatus {
         return (int) lowest;
     }
     public void setSunkShip(String shipName){
+        for (int z = 0; z < getShipLength(shipName); z++){
+            int[] hit = this.parent.getMoves().getLastHitN(z+1);
+            this.parent.setBoardSquare(hit[0], hit[1], "S");
+        }
         this.pieceLength.remove(shipName);
     }
     public boolean noShips(){
