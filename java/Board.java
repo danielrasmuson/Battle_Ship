@@ -1,43 +1,24 @@
 import java.util.*;
 public class Board {
-    public String[][] board;
-    public int checkerBoard;
+
     public ShipStatus ships;
-    public MoveHistory moves;
-    public Interface battleShip;
+    public Moves moves;
+    // public FindingShip find;
 
     public Board(String fileName){
-        this.battleShip = new Interface(fileName);
-
-
-        String[][] board = new String[10][10];
-        this.board = board;
-        // turn it into string
-        for (int y = 0; y < this.board.length; y++){
-            for (int x = 0; x < this.board[y].length; x++){
-                this.board[y][x] = "?";
-            }
-        }
-
-        // init - pick a random number for the checkerBoard
-        // todo add random back in was causing problems
-        // Random rand = new Random();
-        // int randomNum = rand.nextInt((1 - 0) + 1) + 0;
-        this.checkerBoard = 0;
-
-        // init ships
-        ShipStatus ships = new ShipStatus();
-        this.ships = ships;
-
-        // init - move history 
-        this.moves = new MoveHistory(this);
+        // init ships, move history, finding ship
+        this.ships = new ShipStatus();
+        this.moves = new Moves(this, fileName);
+        // this.find = new FindingShip(this);
     }
-    // ---------- GENERAL -----------
-    public MoveHistory getMoves(){
+    public Moves getMoves(){
         return this.moves;
     }
     public boolean isGameDone(){
         return battleShip.isSolved();
+    }
+    public ShipStatus getShips(){
+        return this.ships;
     }
     public void print(){
         for (int y = 0; y < this.board.length; y++){
@@ -47,31 +28,7 @@ public class Board {
             System.out.println();
         }
     }
-    public ShipStatus getShips(){
-        return this.ships;
-    }
-
-    // ---------- FINDING SHIP -----------
-    public int[] getNextSquare(){
-        /*
-            Pick the next square on the checkerboard that is unsolved
-        */
-        for (int y = 0; y < this.board.length; y++){
-            for (int x = 0; x < this.board[y].length; x++){
-                if (isSquareOnCheckboard(x,y)){
-                    if (isSquareUnknown(x,y)){
-                        int[] coords = {x, y};
-                        return coords;
-                    }
-                }
-            }
-        }
-
-        // should never get here
-        int[] endOfBoard = {-1, -1};
-        return endOfBoard;
-    }
-    public boolean isSquareUnknown(int x, int y){
+    private boolean isSquareUnknown(int x, int y){
         // if the squre is not on the board
         int size = this.board.length-1;
         if (x < 0 || y < 0 || x > size || y > size){
@@ -85,7 +42,7 @@ public class Board {
             return false;
         }
     }
-    public boolean isSquareMiss(int x, int y){
+    private boolean isSquareMiss(int x, int y){
         // if the squre is not on the board
         int size = this.board.length-1;
         if (x < 0 || y < 0 || x > size || y > size){
@@ -96,12 +53,14 @@ public class Board {
 
         // look at the board to see if I shot there
         // System.out.println(this.board[y][x]);
-        if (this.board[y][x].equals("0")){
+        if (this.board[y][x].equals(this.getMoves().getMC())){ // get miss character
             return true;
         } else{
             return false;
         }
     }
+<<<<<<< HEAD
+=======
     public boolean isSquareOnCheckboard(int x, int y){
         /*
             // pick even or odd squares
@@ -148,30 +107,26 @@ public class Board {
             return "hit";
         } else{ // it should only sink a ship when its called from sinkingShip 
             // set board to sunk
-            this.moves.addMove(x,y,"1");
-
             // todo assume I hit the ship in order
-            int shipLength = this.getShips().getShipLength(result);
-            for (int z = 0; z < shipLength; z++){
-                // because if its out of range I shouldn't be searching
-                if (this.getMoves().isLastHitN(z+1)){                
-                    int[] hit = this.getMoves().getLastHitN(z+1);
-                    // this.getMoves().print();
-                    // System.out.println(Arrays.toString(hit));
-                    // this.print();
-                    this.board[hit[1]][hit[0]] = "S";
-                }
-            }
+            // todo renalbe this
+            // int shipLength = this.getShips().getShipLength(result);
+            // for (int z = 0; z < shipLength; z++){
+            //     int[] hit = this.getMoves().getLastHitN(z+1);
+            //     System.out.println(Arrays.toString(hit));
+            //     this.print();
+            //     this.board[hit[1]][hit[0]] = "S";
+            // }
 
             // this.board[y][x] = "S";
             // if there are no ships left the game is over
             this.board[y][x] = "H";
             this.getShips().setSunkShip(result);
             if (ships.noShips()){
+                this.moves.addMove(x,y,"done");
                 return "done";
             }
             else{
-                this.moves.addMove(x,y,"1");
+                this.moves.addMove(x,y,result);
                 return "sunk";
             }     
         }
@@ -279,6 +234,7 @@ public class Board {
             coord[0] = coord[0]+1*upDown;
             return coord;
         }
+
     }
     public void fireCirclingShip(){
         /*
@@ -362,4 +318,5 @@ public class Board {
             return true;
         }
     }
+>>>>>>> parent of 8d9fcda... About to redo abstraction, and remove uneeded code, good bye next 2 hours
 }

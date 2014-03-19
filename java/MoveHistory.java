@@ -70,22 +70,4 @@ public class MoveHistory {
         int[] doesNotExist = {-1};
         return doesNotExist; 
     }
-    public boolean isLastHitN(int n){
-        int highestMove = this.getHighestMoveNum();
-        int nthHit = 0;
-        for (int i = highestMove; i > 0; i--){
-            // todo isHit()
-            // todo change this -- bad encapsulation
-            // is hit
-            int[] coord = this.moveLocation.get(i);
-            // System.out.println(Arrays.toString(coord));
-            if (this.parent.isHit(coord[0], coord[1])){
-                nthHit += 1;
-                if (nthHit == n){
-                    return true;
-                }
-            }
-        }
-        return false; 
-    }
 }

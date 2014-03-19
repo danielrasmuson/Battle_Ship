@@ -82,6 +82,6 @@ def createBoard(fileName):
     textFile.close()
 
 counter = 1
-while counter < 1001:
+while counter < 10001:
     createBoard("Boards\\"+str(counter)+".txt")
     counter += 1
