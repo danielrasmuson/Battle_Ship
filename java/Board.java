@@ -59,8 +59,7 @@ public class Board {
             return false;
         }
     }
-<<<<<<< HEAD
-=======
+
     public boolean isSquareOnCheckboard(int x, int y){
         /*
             // pick even or odd squares
@@ -318,5 +317,4 @@ public class Board {
             return true;
         }
     }
->>>>>>> parent of 8d9fcda... About to redo abstraction, and remove uneeded code, good bye next 2 hours
 }
