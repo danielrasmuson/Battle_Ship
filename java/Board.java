@@ -94,6 +94,9 @@ public class Board {
             return "bad";//hopefully this will get me out of the loop I'm stuck in
         }
 
+        System.out.println("");
+        System.out.println("");
+        this.print();
         String result = battleShip.fireShot(x,y);
 
         if (result.equals("0")){
@@ -111,7 +114,41 @@ public class Board {
             this.moves.addMove(x,y,"H");
             setBoardSquare(x, y, "S");
 
+            // System.out.println("going into sunk ship!!!");
             this.getShips().setSunkShip(result);
+
+            // if there are H's are the board we have a serious problem it means
+            // we hit a ship that is not part of the ship we sunk
+            // we should take that move and put it into the cirlceShip if its only one hit
+            // if its two hits we use the fireOnShip line
+            int hCount = 0;
+            for (int b = 0; b < 10; b++){
+                for (int a = 0; a < 10; a++){
+                    if (this.board[b][a] == "H"){
+                        hCount += 1;
+                    }
+                }
+            }
+            if (hCount > 0){
+                System.out.println("H COUNT");
+                System.out.println("Time for drastic Action!");
+                System.out.println(Arrays.toString(this.getMoves().getHitN(1)));
+                // System.out.println(hCount);
+                // this.print();
+                // // make sure the H is correctly found by last hit
+                // System.out.println("");
+                // System.out.println("");
+                // System.out.println("");
+                // if (hCount == 1){                    
+
+                // I dont know I might have to put this into a if count statment
+                this.sinkShip();
+                
+                // }
+                // this.print();
+                System.out.println("END OF H COUNT");
+            }
+
 
             // if there are no ships left the game is over
             // this.board[y][x] = "S";
@@ -225,8 +262,8 @@ public class Board {
     }
     public String getLineLastTwoHits(){
         // you need to know if the ship you found is going up or down 
-        int[] point1 = this.getMoves().getLastHitN(1); // most recent hit
-        int[] point2 = this.getMoves().getLastHitN(2); // most recent hit
+        int[] point1 = this.getMoves().getLastHitOrMiss(1); // most recent hit
+        int[] point2 = this.getMoves().getLastHitOrMiss(2); // most recent hit
         if (point1[0] == point2[0]){
             return "v"; // vertical
         } else{
@@ -278,7 +315,7 @@ public class Board {
         // ??????????
         // ??????????
 
-        int[] lastHit = this.getMoves().getLastHitN(1); // most recent hit
+        int[] lastHit = this.getMoves().getHitN(1); // most recent hit
         int fX = lastHit[0];
         int fY = lastHit[1];
         String result = "0";
@@ -303,9 +340,8 @@ public class Board {
         figures out what direction the ship is facing
         then takes the next shot at it
     */
-    // todo restructure this function its a mess
     public String fireNextShotOnLine(String direction){
-        int[] lastHit = this.getMoves().getLastHitN(1); // most recent hit
+        int[] lastHit = this.getMoves().getHitN(1); // most recent hit
 
         // depending if we are going down or up on the board
         int[] forwardBackward = {1, -1};
@@ -322,11 +358,18 @@ public class Board {
         }
         return "notLine";
     }
-    public boolean isHit(int x, int y){
+    public boolean isHitOrMiss(int x, int y){
         if (board[y][x].equals("?") || board[y][x].equals("0")){
             return false;
         }else{
             return true;
+        }
+    }
+    public boolean isHit(int x, int y){
+        if (board[y][x].equals("H")){
+            return true;
+        }else{
+            return false;
         }
     }
 }

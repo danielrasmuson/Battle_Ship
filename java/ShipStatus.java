@@ -33,10 +33,23 @@ public class ShipStatus {
         return (int) lowest;
     }
     public void setSunkShip(String shipName){
+        // System.out.println("SUNK SHIP");
+        // System.out.print("Ship Name");
+        // System.out.println(shipName);
+        // System.out.print("Ship Length");
+        // System.out.println(getShipLength(shipName));
         for (int z = 0; z < getShipLength(shipName); z++){
-            int[] hit = this.parent.getMoves().getLastHitN(z+1);
+            int[] hit = this.parent.getMoves().getLastHitOrMiss(z+1);
+            // todo dont really like th S here, ship status shouldn't know that
             this.parent.setBoardSquare(hit[0], hit[1], "S");
+            this.parent.getMoves().setMoveResult(hit[0], hit[1],  "S");
+            // System.out.print(hit[0]);
+            // System.out.print(hit[1]);
+            // System.out.println("");
         }
+        // System.out.println("wondering what the moves are? well you are in luck!");
+        // this.parent.getMoves().print();
+        // System.out.println("END OF SINKING");
         this.pieceLength.remove(shipName);
     }
     public boolean noShips(){

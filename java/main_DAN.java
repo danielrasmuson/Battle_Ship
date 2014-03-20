@@ -24,9 +24,6 @@ public class main_DAN {
                 if (result.equals("H")){
                     board.sinkShip();
                 }
-                board.print();
-                System.out.println("");
-                System.out.println("");
             }
             total += board.getMoves().getHighestMoveNum();
             board.print();

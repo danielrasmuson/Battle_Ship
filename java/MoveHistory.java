@@ -37,6 +37,19 @@ public class MoveHistory {
         this.moveLocation.put(currentMove, coord);
         this.moveResult.put(currentMove, result);
     }
+    public void setMoveResult(int x, int y, String result){
+        // this function loops through the results and if you 
+        // location == the location in the loop it changes the result
+        changed:
+        for (Map.Entry<Integer, int[]> entry : this.moveLocation.entrySet()) {
+            Integer key = entry.getKey();
+            int[] value = entry.getValue();
+            if (value[0] == x && value[1] == y){
+                this.moveResult.put(key, result);
+                break changed;
+            }
+        }
+    }
     public int getHighestMoveNum(){
         int highest = 0;
         for (int value : this.moveLocation.keySet()) {
@@ -55,7 +68,24 @@ public class MoveHistory {
             System.out.println(" -- "+this.moveResult.get(key));
         }
     }
-    public int[] getLastHitN(int n){
+    public int[] getLastHitOrMiss(int n){
+        int highestMove = this.getHighestMoveNum();
+        int nthHit = 0;
+        for (int i = highestMove; i > 0; i--){
+            int[] coord = this.moveLocation.get(i);
+            if (this.parent.isHitOrMiss(coord[0], coord[1])){
+                nthHit += 1;
+                if (nthHit == n){
+                    return this.moveLocation.get(i);
+                }
+            }
+        }
+        this.print();
+        this.parent.print();
+        int[] doesNotExist = {-1};
+        return doesNotExist; 
+    }
+    public int[] getHitN(int n){
         int highestMove = this.getHighestMoveNum();
         int nthHit = 0;
         for (int i = highestMove; i > 0; i--){
