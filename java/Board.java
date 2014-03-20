@@ -342,13 +342,28 @@ public class Board {
         int[] forwardBackward = {1, -1};
         for (int leftRight : forwardBackward){
             int[] nSquare = this.nextSquare(lastHit, direction, leftRight);
+
+            // if its a miss or off board switch directions
             boolean nMissing = isSquareMissOrOffBoard(nSquare[0], nSquare[1]);
+
+            // if its sunk switch directoins 
+            // ?HHSS?????
+            // ?HHSS0????
+            if (isSunk(nSquare[0], nSquare[1])){
+                nMissing = !nMissing;
+            }
+
             while (!nMissing){ // while the next square is not a miss
                 if (isSquareUnknown(nSquare[0], nSquare[1])){
                     return this.fireShot(nSquare[0], nSquare[1]);
                 }
                 nSquare = this.nextSquare(nSquare, direction, leftRight);
+
+                // todo should I try and combine these?
                 nMissing = isSquareMissOrOffBoard(nSquare[0], nSquare[1]);
+                if (isSunk(nSquare[0], nSquare[1])){
+                    nMissing = !nMissing;
+                }
             }
         }
         return "notLine";
@@ -362,6 +377,13 @@ public class Board {
     }
     public boolean isHit(int x, int y){
         if (board[y][x].equals("H")){
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public boolean isSunk(int x, int y){
+        if (board[y][x].equals("S")){
             return true;
         }else{
             return false;
