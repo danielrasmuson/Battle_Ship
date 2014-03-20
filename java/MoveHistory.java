@@ -34,17 +34,8 @@ public class MoveHistory {
         int[] coord = {x,y};
         // this.print();
         Integer currentMove = this.getHighestMoveNum()+1;
-
-        // this.print();
-        System.out.println("Putting "+Arrays.toString(coord)+" in "+ currentMove);
-
         this.moveLocation.put(currentMove, coord);
         this.moveResult.put(currentMove, result);
-
-        this.print();
-        System.out.println("");
-        System.out.println("");
-        System.out.println("");
     }
     public int getHighestMoveNum(){
         int highest = 0;
@@ -68,11 +59,7 @@ public class MoveHistory {
         int highestMove = this.getHighestMoveNum();
         int nthHit = 0;
         for (int i = highestMove; i > 0; i--){
-            // todo isHit()
-            // todo change this -- bad encapsulation
-            // is hit
             int[] coord = this.moveLocation.get(i);
-            // System.out.println(Arrays.toString(coord));
             if (this.parent.isHit(coord[0], coord[1])){
                 nthHit += 1;
                 if (nthHit == n){
