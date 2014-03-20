@@ -1,5 +1,3 @@
-#TODO - add check for correct board take in
-
 class Interface():
     """ Do not use all the functions here (dont get board and see where everything is) 
             Feel free to use anything while testing

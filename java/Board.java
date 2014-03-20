@@ -90,7 +90,6 @@ public class Board {
             System.out.print(", ");
             System.out.print(y);
             System.out.println("]");
-            // todo probably a better solution
             return "bad";//hopefully this will get me out of the loop I'm stuck in
         }
 
@@ -107,10 +106,8 @@ public class Board {
             this.moves.addMove(x,y,"H");
             setBoardSquare(x, y, "H");
             return "H";
-        } else{ // it should only sink a ship when its called from sinkingShip 
-            // set board to sunk
+        } else{
             // todo assume I hit the ship in order
-            // todo renalbe this
             this.moves.addMove(x,y,"H");
             setBoardSquare(x, y, "S");
 
@@ -143,7 +140,7 @@ public class Board {
 
                 // I dont know I might have to put this into a if count statment
                 this.sinkShip();
-                
+
                 // }
                 // this.print();
                 System.out.println("END OF H COUNT");
@@ -274,8 +271,7 @@ public class Board {
         String direction = this.getLineLastTwoHits();
         String result = "H";
 
-        // not sunk
-        // todo here is where I should add ability for multiple ships
+        // I.E. not sunk
         while (result.equals("H") || result.equals("0")){
             result = fireNextShotOnLine(direction);
         }
@@ -300,7 +296,6 @@ public class Board {
             another hit so you can determine the direction
         */
         // todo make this code a little cleaner
-        // todo make it pick a random order
         // todo mayb include the length or probability of a direction
         // todo here I should know that it probably wont be in the two sides next to it
         // [1, 3]

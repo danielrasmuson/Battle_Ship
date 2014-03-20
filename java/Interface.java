@@ -98,10 +98,7 @@ class Interface {
         }
         else{
             this.board[y][x] = "1";
-            // if (this.isSolved()){// todo make isSolved
-            //     this.setDone(); // todo add setDone         
-            // }
-
+            
             // turn this.board into a string
             String strBoard = "";
             for (int i = 0; i < this.board.length; i++){
