@@ -39,7 +39,13 @@ public class ShipStatus {
         // System.out.print("Ship Length");
         // System.out.println(getShipLength(shipName));
         for (int z = 0; z < getShipLength(shipName); z++){
-            int[] hit = this.parent.getMoves().getLastHitOrMiss(z+1);
+            // the reason im choosing getHitN(1) is because I anticpate it removing the last hit
+            // so it will also be the most recent hit
+            int[] hit = this.parent.getMoves().getHitN(1);
+            System.out.println("getHitN");
+            System.out.println(Arrays.toString(hit));
+            System.out.println("end getHitN");
+
             // todo dont really like th S here, ship status shouldn't know that
             this.parent.setBoardSquare(hit[0], hit[1], "S");
             this.parent.getMoves().setMoveResult(hit[0], hit[1],  "S");

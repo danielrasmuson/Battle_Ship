@@ -17,11 +17,11 @@ public class main_DAN {
         for (int i = boardNum; i < boardNum+1; i++){
             Board board = new Board("1000Boards\\"+Integer.toString(i)+".txt");
             
-            for (int z = 0; z < 65; z++){
-            // while (!board.isGameDone()){
+            // for (int z = 0; z < 65; z++){
+            while (!board.isGameDone()){
                 int[] coord = board.getBestGuess();
-                String result = board.fireShot(coord[0], coord[1]);
-                if (result.equals("H")){
+                board.fireShot(coord[0], coord[1]);
+                if (board.isHit(coord[0], coord[1])){ // todo dont want H here
                     board.sinkShip();
                 }
             }

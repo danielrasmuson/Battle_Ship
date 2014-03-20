@@ -86,11 +86,16 @@ public class MoveHistory {
         return doesNotExist; 
     }
     public int[] getHitN(int n){
+        // n should start at 1 for most recent hit
         int highestMove = this.getHighestMoveNum();
         int nthHit = 0;
         for (int i = highestMove; i > 0; i--){
             int[] coord = this.moveLocation.get(i);
             if (this.parent.isHit(coord[0], coord[1])){
+                System.out.println("here");
+                System.out.println(coord[0]);
+                System.out.println(coord[1]);
+                System.out.println("out");
                 nthHit += 1;
                 if (nthHit == n){
                     return this.moveLocation.get(i);
