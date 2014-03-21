@@ -333,41 +333,27 @@ public class Board {
     private void fireNextShotOnLine(String direction, int leftRight){
         int[] lastHit = this.getMoves().getHitN(1); // most recent hit
         int[] nSquare = this.nextSquare(lastHit, direction, leftRight);
-
-        // if its a miss or off board switch directions
         boolean nMissing;
-        if (isMiss(nSquare[0], nSquare[1]) || isSquareOffBoard(nSquare[0], nSquare[1])){
-            nMissing = true;
-        } else{
-            nMissing = false;
-        }
 
-        // if its sunk switch directoins 
-        // ?HHSS?????
-        // ?HHSS0????
-        if (isSunk(nSquare[0], nSquare[1])){
-            nMissing = !nMissing;
-        }
-
-        while (!nMissing){ // while the next square is not a miss
-            if (isSquareUnknown(nSquare[0], nSquare[1])){
+        do{ 
+            if (isHit(nSquare[0], nSquare[1])){ // if hit
+                nSquare = this.nextSquare(nSquare, direction, leftRight);
+                nMissing = false;
+            } else if (isSquareUnknown(nSquare[0], nSquare[1])){ // if unkown
                 this.fireShot(nSquare[0], nSquare[1]);
                 return;
-            }
-            nSquare = this.nextSquare(nSquare, direction, leftRight);
-
-            // todo should I try and combine these?
-            if (isMiss(nSquare[0], nSquare[1]) || isSquareOffBoard(nSquare[0], nSquare[1])){
+            }else{ // if miss, off board, or sunk -- stop
                 nMissing = true;
-            } else{
-                nMissing = false;
             }
+        }while (!nMissing); // while the next square is not a miss
 
-            if (isSunk(nSquare[0], nSquare[1])){
-                nMissing = !nMissing;
-            }
-        }
+
+        // right now if it gest down here it means there are multiple ships 
+        // 
+
         System.out.println("shouldnt get to the end fireNextShotOnLine");
+        this.print();
+        this.getMoves().print();
         return;
     }
 
