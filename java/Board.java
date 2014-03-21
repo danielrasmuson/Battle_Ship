@@ -110,9 +110,6 @@ public class Board {
             return "bad";//hopefully this will get me out of the loop I'm stuck in
         }
 
-        // System.out.println("");
-        // System.out.println("");
-        // this.print();
         String result = battleShip.fireShot(x,y);
 
         if (result.equals("0")){
@@ -333,27 +330,30 @@ public class Board {
     private void fireNextShotOnLine(String direction, int leftRight){
         int[] lastHit = this.getMoves().getHitN(1); // most recent hit
         int[] nSquare = this.nextSquare(lastHit, direction, leftRight);
-        boolean nMissing;
+        boolean stop;
 
         do{ 
-            if (isHit(nSquare[0], nSquare[1])){ // if hit
+            if (isSquareOffBoard(nSquare[0], nSquare[1])) {
+                stop = true;
+            } else if (isHit(nSquare[0], nSquare[1])){ // if hit
+                // we are going to run up the hits until we find a unknown
                 nSquare = this.nextSquare(nSquare, direction, leftRight);
-                nMissing = false;
+                stop = false;
             } else if (isSquareUnknown(nSquare[0], nSquare[1])){ // if unkown
                 this.fireShot(nSquare[0], nSquare[1]);
                 return;
             }else{ // if miss, off board, or sunk -- stop
-                nMissing = true;
+                stop = true;
             }
-        }while (!nMissing); // while the next square is not a miss
+        }while (!stop); // while the next square is not a miss
 
 
         // right now if it gest down here it means there are multiple ships 
         // 
 
-        System.out.println("shouldnt get to the end fireNextShotOnLine");
-        this.print();
-        this.getMoves().print();
+        // System.out.println("shouldnt get to the end fireNextShotOnLine");
+        // this.print();
+        // this.getMoves().print();
         return;
     }
 

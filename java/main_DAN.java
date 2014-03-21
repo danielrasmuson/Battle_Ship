@@ -11,16 +11,16 @@ public class main_DAN {
     public static void main(String[] args) {
 
         // int numOfBoards = 9;
-        int boardNum = 2;
+        int boardNum = 4;
         int total = 0;
         // for (int i = 1; i < numOfBoards+1; i++){
         for (int i = boardNum; i < boardNum+1; i++){
             Board board = new Board("1000Boards\\"+Integer.toString(i)+".txt");
             
-            // for (int z = 0; z < 65; z++){
             int movecounter = 1;
             stuckInLoop:
             while (!board.isGameDone()){
+            // for (int z = 0; z < 10; z++){
                 int[] coord = board.getBestGuess();
                 board.fireShot(coord[0], coord[1]);
                 if (board.isHit(coord[0], coord[1])){
@@ -34,6 +34,7 @@ public class main_DAN {
 
             }
             total += board.getMoves().getHighestMoveNum();
+            System.out.println("");
             board.print();
         }
         System.out.print("Average Moves:");
