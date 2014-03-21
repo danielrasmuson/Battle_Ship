@@ -18,12 +18,20 @@ public class main_DAN {
             Board board = new Board("1000Boards\\"+Integer.toString(i)+".txt");
             
             // for (int z = 0; z < 65; z++){
+            int movecounter = 1;
+            stuckInLoop:
             while (!board.isGameDone()){
                 int[] coord = board.getBestGuess();
                 board.fireShot(coord[0], coord[1]);
                 if (board.isHit(coord[0], coord[1])){
                     board.sinkShip();
                 }
+
+                if (movecounter > 100){
+                    System.out.println("problem in main loop");
+                    break stuckInLoop;
+                }
+
             }
             total += board.getMoves().getHighestMoveNum();
             board.print();

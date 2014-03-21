@@ -254,9 +254,30 @@ public class Board {
         String direction = this.getLineLastTwoHits();
         String result = "H";
 
-        // I.E. not sunk
-        while (result.equals("H") || result.equals("0")){
-            result = fireNextShotOnLine(direction);
+        // this is bascially if no shots where the first time through no more ore oging to be fired
+        // the second time through so we should stop
+        int mNumLenOld = 0;
+
+        // I.E. not sunk Testing
+        int counter = 0;
+        stuckInLoop:
+        while (getHCount() > 0 && mNumLenOld < this.getMoves().getHighestMoveNum()){
+            mNumLenOld = this.getMoves().getHighestMoveNum();
+            if (getHCount() > 0){
+                fireNextShotOnLine(direction, 1);
+            }
+            if (getHCount() > 0){
+                fireNextShotOnLine(direction, -1);
+            }
+
+            // Testing 
+            counter += 1;
+            if (counter > 10){
+                System.out.println("stuck in loop insdie fireOnShipLine");
+                this.print();
+                this.getMoves().print();
+                break stuckInLoop;
+            }
         }
         return result;
     }
@@ -309,52 +330,45 @@ public class Board {
             result = this.fireShot(fX, fY-1);
         }
     }
-    /*
-        figures out what direction the ship is facing
-        then takes the next shot at it
-    */
-    public String fireNextShotOnLine(String direction){
+    private void fireNextShotOnLine(String direction, int leftRight){
         int[] lastHit = this.getMoves().getHitN(1); // most recent hit
+        int[] nSquare = this.nextSquare(lastHit, direction, leftRight);
 
-        // depending if we are going down or up on the board
-        int[] forwardBackward = {1, -1};
-        for (int leftRight : forwardBackward){
-            int[] nSquare = this.nextSquare(lastHit, direction, leftRight);
+        // if its a miss or off board switch directions
+        boolean nMissing;
+        if (isMiss(nSquare[0], nSquare[1]) || isSquareOffBoard(nSquare[0], nSquare[1])){
+            nMissing = true;
+        } else{
+            nMissing = false;
+        }
 
-            // if its a miss or off board switch directions
-            boolean nMissing;
+        // if its sunk switch directoins 
+        // ?HHSS?????
+        // ?HHSS0????
+        if (isSunk(nSquare[0], nSquare[1])){
+            nMissing = !nMissing;
+        }
+
+        while (!nMissing){ // while the next square is not a miss
+            if (isSquareUnknown(nSquare[0], nSquare[1])){
+                this.fireShot(nSquare[0], nSquare[1]);
+                return;
+            }
+            nSquare = this.nextSquare(nSquare, direction, leftRight);
+
+            // todo should I try and combine these?
             if (isMiss(nSquare[0], nSquare[1]) || isSquareOffBoard(nSquare[0], nSquare[1])){
                 nMissing = true;
             } else{
                 nMissing = false;
             }
 
-            // if its sunk switch directoins 
-            // ?HHSS?????
-            // ?HHSS0????
             if (isSunk(nSquare[0], nSquare[1])){
                 nMissing = !nMissing;
             }
-
-            while (!nMissing){ // while the next square is not a miss
-                if (isSquareUnknown(nSquare[0], nSquare[1])){
-                    return this.fireShot(nSquare[0], nSquare[1]);
-                }
-                nSquare = this.nextSquare(nSquare, direction, leftRight);
-
-                // todo should I try and combine these?
-                if (isMiss(nSquare[0], nSquare[1]) || isSquareOffBoard(nSquare[0], nSquare[1])){
-                    nMissing = true;
-                } else{
-                    nMissing = false;
-                }
-
-                if (isSunk(nSquare[0], nSquare[1])){
-                    nMissing = !nMissing;
-                }
-            }
         }
-        return "notLine";
+        System.out.println("shouldnt get to the end fireNextShotOnLine");
+        return;
     }
 
 }
