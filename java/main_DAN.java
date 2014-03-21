@@ -11,7 +11,7 @@ public class main_DAN {
     public static void main(String[] args) {
 
         // int numOfBoards = 9;
-        int boardNum = 9;
+        int boardNum = 3;
         int total = 0;
         // for (int i = 1; i < numOfBoards+1; i++){
         for (int i = boardNum; i < boardNum+1; i++){
@@ -19,8 +19,8 @@ public class main_DAN {
             
             int movecounter = 1;
             stuckInLoop:
-            while (!board.isGameDone()){
-            // for (int z = 0; z < 10; z++){
+            // while (!board.isGameDone()){
+            for (int z = 0; z < 6; z++){
                 int[] coord = board.getBestGuess();
                 board.fireShot(coord[0], coord[1]);
                 if (board.isHit(coord[0], coord[1])){
@@ -33,6 +33,19 @@ public class main_DAN {
                 }
 
             }
+            board.fireShot(6,2);
+            board.fireShot(6,3);
+            board.fireShot(6,4);
+            board.fireShot(6,1);
+            board.fireShot(6,5);
+            board.fireShot(6,0);
+            // board.fireShot(6,6);
+            // board.fireShot(6,7);
+            // board.fireShot(6,2);
+            // board.fireCirclingShip();
+            // board.fireOnShipLine();
+            // board.getMoves().print();
+
             total += board.getMoves().getHighestMoveNum();
             // System.out.println("");
             board.print();

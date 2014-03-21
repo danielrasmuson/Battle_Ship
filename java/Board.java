@@ -210,7 +210,7 @@ public class Board {
     }
 
     // ---------- SINKING SHIP -----------
-    private int getHCount(){
+    public int getHCount(){
         // if there are H's are the board we have a serious problem it means
         // we hit a ship that is not part of the ship we sunk
         // we should take that move and put it into the cirlceShip if its only one hit
