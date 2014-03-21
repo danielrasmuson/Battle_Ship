@@ -30,9 +30,7 @@ public class MoveHistory {
         this.parent = parent;
     }
     public void addMove(int x, int y, String result){
-        // todo result might not be the best
         int[] coord = {x,y};
-        // this.print();
         Integer currentMove = this.getHighestMoveNum()+1;
         this.moveLocation.put(currentMove, coord);
         this.moveResult.put(currentMove, result);
@@ -68,23 +66,6 @@ public class MoveHistory {
             System.out.println(" -- "+this.moveResult.get(key));
         }
     }
-    public int[] getLastHitOrMiss(int n){
-        int highestMove = this.getHighestMoveNum();
-        int nthHit = 0;
-        for (int i = highestMove; i > 0; i--){
-            int[] coord = this.moveLocation.get(i);
-            if (this.parent.isHitOrMiss(coord[0], coord[1])){
-                nthHit += 1;
-                if (nthHit == n){
-                    return this.moveLocation.get(i);
-                }
-            }
-        }
-        this.print();
-        this.parent.print();
-        int[] doesNotExist = {-1};
-        return doesNotExist; 
-    }
     public int[] getHitN(int n){
         // n should start at 1 for most recent hit
         int highestMove = this.getHighestMoveNum();
@@ -92,16 +73,13 @@ public class MoveHistory {
         for (int i = highestMove; i > 0; i--){
             int[] coord = this.moveLocation.get(i);
             if (this.parent.isHit(coord[0], coord[1])){
-                System.out.println("here");
-                System.out.println(coord[0]);
-                System.out.println(coord[1]);
-                System.out.println("out");
                 nthHit += 1;
                 if (nthHit == n){
                     return this.moveLocation.get(i);
                 }
             }
         }
+        System.out.println("Hit a problem in getHitN there are not hits that match thsi");
         this.print();
         this.parent.print();
         int[] doesNotExist = {-1};

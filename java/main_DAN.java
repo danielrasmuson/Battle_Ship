@@ -21,7 +21,7 @@ public class main_DAN {
             while (!board.isGameDone()){
                 int[] coord = board.getBestGuess();
                 board.fireShot(coord[0], coord[1]);
-                if (board.isHit(coord[0], coord[1])){ // todo dont want H here
+                if (board.isHit(coord[0], coord[1])){
                     board.sinkShip();
                 }
             }
