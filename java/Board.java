@@ -111,6 +111,11 @@ public class Board {
         }
 
         String result = battleShip.fireShot(x,y);
+        // System.out.println("");
+        // System.out.println("start of print board");
+        // this.print();
+        // System.out.println("end of print board");
+        // System.out.println("");
 
         if (result.equals("0")){
             this.moves.addMove(x,y,"0");
@@ -222,10 +227,13 @@ public class Board {
     }
     public void sinkShip(){
         this.fireCirclingShip(); 
+        if (getHCount() == 0){
+            // fireCirclingShip sunk the ship
+            return;
+        }
         this.fireOnShipLine();
 
-        int hCount = getHCount();
-        if (hCount > 0){
+        if (getHCount() > 0){
             int counter = 0;
             stuckInLoop:
             while (getHCount() > 0){
@@ -238,17 +246,25 @@ public class Board {
             }
         }
     }
-    public String getLineLastTwoHits(){
+    public void fireOnShipLine(){
+        if (getHCount() == 0){
+            System.out.println("incorrectly called -- fireOnShipLine");
+            this.print();
+            System.out.println("Is it incorrectly called? looks like there is an H");
+            return;
+        }
+
+        // get line last two hits
+        String direction;
         int[] point1 = this.getMoves().getHitN(1); // most recent hit
         int[] point2 = this.getMoves().getHitN(2); // most recent hit
         if (point1[0] == point2[0]){
-            return "v"; // vertical
+            direction = "v"; // vertical
         } else{
-            return "h"; // horizontal
+            direction = "h"; // horizontal
         }
-    }
-    public String fireOnShipLine(){
-        String direction = this.getLineLastTwoHits();
+
+
         String result = "H";
 
         // this is bascially if no shots where the first time through no more ore oging to be fired
@@ -276,7 +292,7 @@ public class Board {
                 break stuckInLoop;
             }
         }
-        return result;
+        return;
     }
     public int[] nextSquare(int[] coord, String direction, int upDown){
         // updown is negative or positive 1 depending on direction
@@ -310,6 +326,12 @@ public class Board {
         // ??????????
         // ??????????
 
+        if (getHCount() == 0){
+            // this function was incorrectly called if this occures
+            System.out.println("incorrectly called -- fireCirclingShip");
+            return;
+        }
+
         int[] lastHit = this.getMoves().getHitN(1); // most recent hit
         int fX = lastHit[0];
         int fY = lastHit[1];
@@ -328,6 +350,11 @@ public class Board {
         }
     }
     private void fireNextShotOnLine(String direction, int leftRight){
+        if (getHCount() == 0){
+            // this function was incorrectly called if this occures
+            System.out.println("incorrectly called -- fireNextShotOnLine");
+            return;
+        }
         int[] lastHit = this.getMoves().getHitN(1); // most recent hit
         int[] nSquare = this.nextSquare(lastHit, direction, leftRight);
         boolean stop;
